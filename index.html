@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JANスキャナーテスト</title>
+
+  <script src="https://unpkg.com/html5-qrcode"></script>
+
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 20px;
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    #reader {
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      background: #f1f3f4;
+      border-radius: 8px;
+      font-size: 18px;
+      font-weight: bold;
+      word-break: break-all;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h2>JANスキャナーテスト</h2>
+
+  <p>商品バーコードをカメラにかざしてください</p>
+
+  <div id="reader"></div>
+
+  <div id="result">
+    JAN：未読取
+  </div>
+
+  <script>
+    let alreadyRead = false;
+
+    function onScanSuccess(decodedText) {
+
+      if (alreadyRead) return;
+
+      const jan = decodedText.trim();
+
+      if (!/^\d{13}$/.test(jan)) {
+        return;
+      }
+
+      alreadyRead = true;
+
+      document.getElementById("result").innerText =
+        "JAN：" + jan;
+
+      html5QrcodeScanner.clear();
+    }
+
+    const html5QrcodeScanner = new Html5QrcodeScanner(
+      "reader",
+      {
+        fps: 10,
+        qrbox: {
+          width: 280,
+          height: 120
+        },
+        rememberLastUsedCamera: true
+      },
+      false
+    );
+
+    html5QrcodeScanner.render(onScanSuccess);
+  </script>
+
+</body>
+</html>
