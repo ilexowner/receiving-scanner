@@ -53,6 +53,8 @@
     let html5QrCode;
     let alreadyRead = false;
 
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbzPHm9nE4pKvfjKeD4Wc0R-326sc-OWbb4c893Q9MDY2Rih12i0NOKlfEbrhAIZ1ns/exec";
+
     async function startScanner() {
 
       html5QrCode = new Html5Qrcode("reader");
@@ -109,16 +111,48 @@
       alreadyRead = true;
 
       document.getElementById("result").innerText =
-        "JAN：" + jan;
+        "JAN：" + jan + "\n検索中...";
 
       try {
         await html5QrCode.stop();
       } catch (e) {
         console.log(e);
       }
+
+      try {
+
+        const response = await fetch(GAS_URL, {
+        method: "POST",
+        body: JSON.stringify({
+          action: "searchJan",
+          janCode: jan
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.found) {
+
+        document.getElementById("result").innerText =
+          "JAN：" + jan +
+          "\n商品名：" + data.productName +
+          "\n予定数量：" + data.expectedQty;
+
+      } else {
+
+        document.getElementById("result").innerText =
+          "JAN：" + jan +
+          "\n受領データにありません";
+        }
+
+      } catch (err) {
+
+        document.getElementById("result").innerText =
+          "JAN：" + jan +
+          "\n通信エラー：" + err;
+      }
     }
-
-
+    
     window.addEventListener("load", startScanner);
   </script>
 
