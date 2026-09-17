@@ -247,9 +247,30 @@
       
         const saveResult = await response.json();
       
-        if (!saveResult.success) {
+        if (saveResult.success) {
+        
+          // 次の商品を読める状態に戻す
+          alreadyRead = false;
+        
+          currentJan = "";
+          currentProductName = "";
+          currentExpectedQty = 0;
+        
+          document.getElementById("checkArea").style.display = "none";
+          document.getElementById("actualQty").value = "";
+          document.getElementById("checkResult").innerText = "";
+        
+          document.getElementById("result").innerText =
+            "保存完了。次の商品をスキャンしてください";
+        
+          // カメラを自動で再起動
+          await startScanner();
+        
+        } else {
+        
           document.getElementById("checkResult").innerText +=
             "\n保存エラー";
+        
         }
       
       } catch (err) {
