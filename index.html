@@ -93,6 +93,9 @@
   <script>
     let html5QrCode;
     let alreadyRead = false;
+    let currentJan = "";
+    let currentProductName = "";
+    let currentExpectedQty = 0;
 
     const GAS_URL = "https://script.google.com/macros/s/AKfycbzPHm9nE4pKvfjKeD4Wc0R-326sc-OWbb4c893Q9MDY2Rih12i0NOKlfEbrhAIZ1ns/exec";
 
@@ -173,6 +176,9 @@
       const data = await response.json();
 
       if (data.found) {
+        currentJan = jan;
+        currentProductName = data.productName;
+        currentExpectedQty = Number(data.expectedQty);
 
         document.getElementById("result").innerText =
           "JAN：" + jan +
@@ -198,7 +204,7 @@
     }
     
     window.addEventListener("load", startScanner);
-    document.getElementById("checkButton").addEventListener("click", function() {
+    document.getElementById("checkButton").addEventListener("click", async function() {
     
       const actualQty = Number(document.getElementById("actualQty").value);
     
@@ -225,6 +231,32 @@
       } else {
         document.getElementById("checkResult").innerText =
           "× 不一致　差異：" + (actualQty - expectedQty);
+      }
+      try {
+      
+        const response = await fetch(GAS_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "saveInspection",
+            janCode: currentJan,
+            productName: currentProductName,
+            expectedQty: currentExpectedQty,
+            actualQty: actualQty
+          })
+        });
+      
+        const saveResult = await response.json();
+      
+        if (!saveResult.success) {
+          document.getElementById("checkResult").innerText +=
+            "\n保存エラー";
+        }
+      
+      } catch (err) {
+      
+        document.getElementById("checkResult").innerText +=
+          "\n保存エラー：" + err;
+      
       }
     });
   </script>
