@@ -182,8 +182,13 @@
         document.getElementById("result").innerText =
           "JAN：" + jan +
           "\n商品名：" + data.productName +
-          "\n予定数量：" + data.expectedQty;
-          document.getElementById("checkArea").style.display = "block";
+          "\n受領予定：" + data.expectedQty +
+          "\n登録済み：" + data.registeredQty +
+          "\n残り：" + data.remainingQty +
+          "\n過去の登録：" +
+          (data.history.length > 0
+            ? data.history.join("個、") + "個"
+            : "なし");          document.getElementById("checkArea").style.display = "block";
           document.getElementById("actualQty").value = "";
           document.getElementById("checkResult").innerText = "";
           document.getElementById("actualQty").focus();
@@ -227,28 +232,6 @@
         return;
       }
     
-      const resultText = document.getElementById("result").innerText;
-      const match = resultText.match(/予定数量：(\d+)/);
-    
-      if (!match) {
-      
-        checkButton.disabled = false;
-        checkButton.innerText = "確定";
-      
-        document.getElementById("checkResult").innerText =
-          "予定数量を取得できません";
-      
-        return;
-      }    
-      const expectedQty = Number(match[1]);
-    
-      if (actualQty === expectedQty) {
-        document.getElementById("checkResult").innerText =
-          "○ 一致";
-      } else {
-        document.getElementById("checkResult").innerText =
-          "× 不一致　差異：" + (actualQty - expectedQty);
-      }
       try {
       
         const response = await fetch(GAS_URL, {
