@@ -184,7 +184,9 @@
           "\n商品名：" + data.productName +
           "\n受領予定：" + data.expectedQty +
           "\n登録済み：" + data.registeredQty +
-          "\n残り：" + data.remainingQty +
+          (data.remainingQty < 0
+            ? "\n超過：" + Math.abs(data.remainingQty)
+            : "\n残り：" + data.remainingQty) +
           "\n入力履歴：" +
           (data.history.length > 0
             ? data.history.join("個、") + "個"
