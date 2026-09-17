@@ -49,6 +49,47 @@
     JAN：未読取
   </div>
 
+  <div id="checkArea" style="display:none; margin-top:20px;">
+  
+    <input
+      type="number"
+      id="actualQty"
+      min="0"
+      inputmode="numeric"
+      placeholder="実績数量"
+      style="
+        width: 80%;
+        padding: 15px;
+        font-size: 22px;
+        text-align: center;
+        box-sizing: border-box;
+      "
+    >
+  
+    <button
+      id="checkButton"
+      style="
+        width: 80%;
+        margin-top: 15px;
+        padding: 15px;
+        font-size: 22px;
+        font-weight: bold;
+      "
+    >
+      検品
+    </button>
+  
+    <div
+      id="checkResult"
+      style="
+        margin-top: 20px;
+        font-size: 24px;
+        font-weight: bold;
+      "
+    ></div>
+  
+  </div>  
+
   <script>
     let html5QrCode;
     let alreadyRead = false;
@@ -137,7 +178,10 @@
           "JAN：" + jan +
           "\n商品名：" + data.productName +
           "\n予定数量：" + data.expectedQty;
-
+          document.getElementById("checkArea").style.display = "block";
+          document.getElementById("actualQty").value = "";
+          document.getElementById("checkResult").innerText = "";
+          document.getElementById("actualQty").focus();
       } else {
 
         document.getElementById("result").innerText =
@@ -154,6 +198,35 @@
     }
     
     window.addEventListener("load", startScanner);
+    document.getElementById("checkButton").addEventListener("click", function() {
+    
+      const actualQty = Number(document.getElementById("actualQty").value);
+    
+      if (document.getElementById("actualQty").value === "") {
+        document.getElementById("checkResult").innerText =
+          "実績数量を入力してください";
+        return;
+      }
+    
+      const resultText = document.getElementById("result").innerText;
+      const match = resultText.match(/予定数量：(\d+)/);
+    
+      if (!match) {
+        document.getElementById("checkResult").innerText =
+          "予定数量を取得できません";
+        return;
+      }
+    
+      const expectedQty = Number(match[1]);
+    
+      if (actualQty === expectedQty) {
+        document.getElementById("checkResult").innerText =
+          "○ 一致";
+      } else {
+        document.getElementById("checkResult").innerText =
+          "× 不一致　差異：" + (actualQty - expectedQty);
+      }
+    });
   </script>
 
 </body>
