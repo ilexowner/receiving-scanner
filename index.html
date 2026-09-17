@@ -96,6 +96,7 @@
     let currentJan = "";
     let currentProductName = "";
     let currentExpectedQty = 0;
+    let currentInspectionId = "";
 
     const GAS_URL = "https://script.google.com/macros/s/AKfycbzPHm9nE4pKvfjKeD4Wc0R-326sc-OWbb4c893Q9MDY2Rih12i0NOKlfEbrhAIZ1ns/exec";
 
@@ -178,6 +179,7 @@
         currentJan = jan;
         currentProductName = data.productName;
         currentExpectedQty = Number(data.expectedQty);
+        currentInspectionId = crypto.randomUUID();
 
         document.getElementById("result").innerText =
           "JAN：" + jan +
@@ -212,7 +214,6 @@
     window.addEventListener("load", startScanner);
     document.getElementById("checkButton").addEventListener("click", async function() {
       const checkButton = document.getElementById("checkButton");
-      const inspectionId = crypto.randomUUID();
       
       if (checkButton.disabled) {
         return;
@@ -244,7 +245,7 @@
             productName: currentProductName,
             expectedQty: currentExpectedQty,
             actualQty: actualQty,
-            inspectionId: inspectionId
+            inspectionId: currentInspectionId
           })
         });
       
@@ -260,6 +261,7 @@
           currentJan = "";
           currentProductName = "";
           currentExpectedQty = 0;
+          currentInspectionId = "";
         
           document.getElementById("checkArea").style.display = "none";
           document.getElementById("actualQty").value = "";
