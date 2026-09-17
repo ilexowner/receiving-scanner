@@ -50,9 +50,53 @@
   </div>
 
   <script>
+    let html5QrCode;
     let alreadyRead = false;
 
-    function onScanSuccess(decodedText) {
+    async function startScanner() {
+
+      html5QrCode = new Html5Qrcode("reader");
+
+      try {
+
+        const cameras = await Html5Qrcode.getCameras();
+
+        if (!cameras || cameras.length === 0) {
+          document.getElementById("result").innerText =
+            "カメラが見つかりません";
+          return;
+        }
+
+        // camera 0 = 背面カメラ
+        const backCamera = cameras.find(camera =>
+          camera.label.toLowerCase().includes("back")
+        );
+
+        const cameraId = backCamera
+          ? backCamera.id
+          : cameras[cameras.length - 1].id;
+
+        await html5QrCode.start(
+          cameraId,
+          {
+            fps: 10,
+            qrbox: {
+              width: 280,
+              height: 120
+            }
+          },
+          onScanSuccess
+        );
+
+      } catch (err) {
+
+        document.getElementById("result").innerText =
+          "カメラ起動エラー：" + err;
+      }
+    }
+
+
+    async function onScanSuccess(decodedText) {
 
       if (alreadyRead) return;
 
@@ -67,23 +111,15 @@
       document.getElementById("result").innerText =
         "JAN：" + jan;
 
-      html5QrcodeScanner.clear();
+      try {
+        await html5QrCode.stop();
+      } catch (e) {
+        console.log(e);
+      }
     }
 
-    const html5QrcodeScanner = new Html5QrcodeScanner(
-      "reader",
-      {
-        fps: 10,
-        qrbox: {
-          width: 280,
-          height: 120
-        },
-        rememberLastUsedCamera: true
-      },
-      false
-    );
 
-    html5QrcodeScanner.render(onScanSuccess);
+    window.addEventListener("load", startScanner);
   </script>
 
 </body>
