@@ -76,7 +76,7 @@
         font-weight: bold;
       "
     >
-      検品
+      確定
     </button>
   
     <div
@@ -163,8 +163,8 @@
         console.log(e);
       }
 
-      try {
-
+      try {        
+        const inspectionId = crypto.randomUUID();
         const response = await fetch(GAS_URL, {
         method: "POST",
         body: JSON.stringify({
@@ -205,6 +205,14 @@
     
     window.addEventListener("load", startScanner);
     document.getElementById("checkButton").addEventListener("click", async function() {
+      const checkButton = document.getElementById("checkButton");
+      
+      if (checkButton.disabled) {
+        return;
+      }
+      
+      checkButton.disabled = true;
+      checkButton.innerText = "保存中…";
     
       const actualQty = Number(document.getElementById("actualQty").value);
     
@@ -241,13 +249,16 @@
             janCode: currentJan,
             productName: currentProductName,
             expectedQty: currentExpectedQty,
-            actualQty: actualQty
+            actualQty: actualQty,
+            inspectionId: inspectionId
           })
         });
       
         const saveResult = await response.json();
       
         if (saveResult.success) {
+          checkButton.disabled = false;
+          checkButton.innerText = "確定";
         
           // 次の商品を読める状態に戻す
           alreadyRead = false;
@@ -267,18 +278,24 @@
           await startScanner();
         
         } else {
+          
+          checkButton.disabled = false;
+          checkButton.innerText = "確定";
         
           document.getElementById("checkResult").innerText +=
             "\n保存エラー";
         
         }
       
-      } catch (err) {
-      
-        document.getElementById("checkResult").innerText +=
-          "\n保存エラー：" + err;
-      
-      }
+        } catch (err) {
+        
+          checkButton.disabled = false;
+          checkButton.innerText = "確定";
+        
+          document.getElementById("checkResult").innerText +=
+            "\n保存エラー：" + err;
+        
+        }
     });
   </script>
 
