@@ -49,6 +49,18 @@
     JAN：未読取
   </div>
 
+  <button
+    id="endButton"
+    style="
+      width: 80%;
+      margin-top: 20px;
+      padding: 12px;
+      font-size: 18px;
+    "
+  >
+    検品を終了
+  </button>
+
   <div id="checkArea" style="display:none; margin-top:20px;">
   
     <input
@@ -295,6 +307,25 @@
             "\n保存エラー：" + err;
         
         }
+    });
+
+    document.getElementById("endButton").addEventListener("click", async function() {
+    
+      try {
+        if (html5QrCode && html5QrCode.isScanning) {
+          await html5QrCode.stop();
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    
+      document.getElementById("reader").style.display = "none";
+      document.getElementById("scanGuide").style.display = "none";
+      document.getElementById("checkArea").style.display = "none";
+      document.getElementById("endButton").style.display = "none";
+    
+      document.getElementById("result").innerText =
+        "検品を終了しました";
     });
   </script>
 
