@@ -39,7 +39,7 @@
 
 <body>
 
-  <h2>受入検品System5</h2>
+  <h2>受入検品System6</h2>
 
   <p id="scanGuide">商品バーコードをカメラにかざしてください</p>
   
@@ -207,11 +207,6 @@
 
       const data = await response.json();
 
-      const totalTime = performance.now() - fetchStart;
-      document.getElementById("result").innerText =
-        "JAN：" + jan +
-        "\n検索時間：" + Math.round(totalTime) + "ms";
-
       if (data.found) {
         currentJan = jan;
         currentProductName = data.productName;
@@ -229,7 +224,9 @@
           "\n入力履歴：" +
           (data.history.length > 0
             ? data.history.join("個、") + "個"
-            : "なし");          document.getElementById("checkArea").style.display = "block";
+            : "なし")+
+          "\n検索時間：" + Math.round(totalTime) + "ms";          
+          document.getElementById("checkArea").style.display = "block";
           document.getElementById("actualQty").value = "";
           document.getElementById("checkResult").innerText = "";
           document.getElementById("actualQty").focus();
