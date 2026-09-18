@@ -39,7 +39,7 @@
 
 <body>
 
-  <h2>受入検品System2</h2>
+  <h2>受入検品System3</h2>
 
   <p id="scanGuide">商品バーコードをカメラにかざしてください</p>
   
@@ -59,6 +59,19 @@
     "
   >
     検品を終了
+  </button>
+
+  <button
+    id="restartButton"
+    style="
+      display: none;
+      width: 80%;
+      margin-top: 20px;
+      padding: 12px;
+      font-size: 18px;
+    "
+  >
+    検品を再開
   </button>
 
   <div id="checkArea" style="display:none; margin-top:20px;">
@@ -323,9 +336,24 @@
       document.getElementById("scanGuide").style.display = "none";
       document.getElementById("checkArea").style.display = "none";
       document.getElementById("endButton").style.display = "none";
+      document.getElementById("restartButton").style.display = "inline-block";
     
       document.getElementById("result").innerText =
         "検品を終了しました";
+    });
+
+    document.getElementById("restartButton").addEventListener("click", async function() {
+    
+      document.getElementById("restartButton").style.display = "none";
+      document.getElementById("endButton").style.display = "inline-block";
+      document.getElementById("reader").style.display = "block";
+    
+      document.getElementById("result").innerText =
+        "JAN：未読取";
+    
+      alreadyRead = false;
+    
+      await startScanner();
     });
   </script>
 
