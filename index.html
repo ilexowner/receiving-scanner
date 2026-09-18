@@ -39,7 +39,7 @@
 
 <body>
 
-  <h2>受入検品System6</h2>
+  <h2>受入検品System</h2>
 
   <p id="scanGuide">商品バーコードをカメラにかざしてください</p>
   
@@ -206,6 +206,8 @@
       console.log("GAS通信時間：" + (fetchEnd - fetchStart) + "ms");
 
       const data = await response.json();
+      const totalTime = performance.now() - fetchStart;
+        
 
       if (data.found) {
         currentJan = jan;
